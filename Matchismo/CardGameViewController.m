@@ -51,7 +51,7 @@
     }
     
     NSUInteger chosenButtonIndex = [self.cardButtons indexOfObject:sender];
-    [self.game choosCardAtIndex:chosenButtonIndex];
+    [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
 

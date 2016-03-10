@@ -16,7 +16,6 @@
 //last move members
 @property (nonatomic) NSUInteger lastMatch;
 @property (nonatomic, readwrite) NSInteger lastScoreAddition;
-@property (nonatomic, strong, readwrite) NSString * lastScoreReason;
 @end
 
 @implementation CardMatchingGame
@@ -64,7 +63,7 @@ static const int MISMATCH_PENALTY = 2;
 static const int CHOOSE_PENALTY = 1;
 
 
-- (void)choosCardAtIndex:(NSUInteger)index
+- (void)chooseCardAtIndex:(NSUInteger)index
 {
     Card * card = [self cardAtIndex:index];
     if(card) {
@@ -77,7 +76,9 @@ static const int CHOOSE_PENALTY = 1;
                     [chosenCards addObject:otherCard];
                 }
             }
-            [self.lastMatchAttempt removeAllObjects];
+            if ([self.lastMatchAttempt count])
+                [self.lastMatchAttempt removeAllObjects];
+            
             self.lastMatch = MAX(self.lastMatch, [card match:chosenCards]);
             if([chosenCards count] == self.matchType - 1){
                 [self.lastMatchAttempt addObjectsFromArray:chosenCards];
@@ -108,79 +109,5 @@ static const int CHOOSE_PENALTY = 1;
     self.score -= CHOOSE_PENALTY;
     card.chosen = YES;
 }
-
-
-//- (void)choosCardAtIndex1:(NSUInteger)index
-//{
-//    Card * card = [self cardAtIndex:index];
-//    if(card) {
-//        if(card.isChosen) {
-//            card.chosen = NO;
-//            [self.chosenUnmatchedCards removeObject:card];
-//        } else if (!card.isMatched) {
-//            //start checking matches
-//            if(self.matchAmount == [self.chosenUnmatchedCards count] + 1){
-//                int matchScore = 0;
-//                if(self.matchAmount == 2)
-//                {
-//                    matchScore = [card match:self.chosenUnmatchedCards];
-//                } else {
-//                    
-//                    NSMutableArray *cardArray =   [[NSMutableArray alloc] initWithArray:self.chosenUnmatchedCards];
-//                    [cardArray addObject:card];
-//                    while ([cardArray count] - 3) {
-//                        Card * otherCard = [cardArray firstObject];
-//                        [cardArray removeObjectAtIndex:0];
-//                        matchScore = MAX(matchScore, [otherCard match:cardArray]);
-//                    }
-//                    for (int i = 0; i < 3; i++)
-//                    {
-//                        Card * otherCard = cardArray[i];
-//                        [cardArray removeObjectAtIndex:i];
-//                        matchScore = MAX(matchScore, [otherCard match:cardArray]);
-//                        [cardArray insertObject:otherCard atIndex:i];
-//                    }
-//                }
-//                [self.chosenUnmatchedCards addObject:card];
-//                if(!matchScore){
-//                    self.score -= MISMATCH_PENALTY;
-//                    for (Card * otherCard in self.chosenUnmatchedCards) {
-//                        otherCard.chosen = NO;
-//                    }
-//                    [self.chosenUnmatchedCards removeAllObjects];
-//                    
-//                    [self.chosenUnmatchedCards addObject:card];
-//
-//                } else{
-//                    for (Card * otherCard in self.chosenUnmatchedCards) {
-//                        otherCard.matched = YES;
-//                    }
-//                    [self.chosenUnmatchedCards removeAllObjects];
-//                    if (self.matchAmount == 2){
-//                        //for the case of 2-match game
-//                        self.score += matchScore * MATCH_BONUS;
-//                        ;
-//                    } else {
-//                        //for the case of N-match game
-//                        self.score += matchScore * (MATCH_BONUS + self.matchAmount);
-//                    }
-//                }
-//                //clear chosen unmatched cards
-//                
-//            } else {
-//                [self.chosenUnmatchedCards addObject:card];
-//            }
-//        }
-//        card.chosen = YES;
-//        self.score -= CHOOSE_PENALTY;
-//    }
-//}
-
-
-
-
-
-
-
 
 @end

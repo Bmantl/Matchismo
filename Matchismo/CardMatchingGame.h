@@ -16,12 +16,11 @@
                         usingDeck:(Deck *) deck;
 
 - (Card *)cardAtIndex:(NSUInteger)index;
-- (void)choosCardAtIndex:(NSUInteger)index;
-- (NSInteger)lastScoreAddition;
+- (void)chooseCardAtIndex:(NSUInteger)index;
 
 @property (nonatomic, readonly) NSInteger score;
 @property (nonatomic, readwrite) NSUInteger matchType;
-@property (nonatomic, strong, readonly) NSString * lastScoreReason;
+
 @property (nonatomic, readonly) NSInteger lastScoreAddition;
 @property (nonatomic, strong) NSMutableArray * lastMatchAttempt;
 
