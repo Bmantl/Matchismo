@@ -21,7 +21,9 @@
 @property (nonatomic, readonly) NSInteger score;
 @property (nonatomic, readwrite) NSUInteger matchType;
 
+//ued to store the score of the last match
 @property (nonatomic, readonly) NSInteger lastScoreAddition;
-@property (nonatomic, strong) NSMutableArray * lastMatchAttempt;
+//stores the cards used for the last matchAttempt
+@property (nonatomic, strong) NSMutableArray * lastMatchAttemptCards;
 
 @end

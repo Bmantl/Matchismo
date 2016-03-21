@@ -26,10 +26,10 @@
   return _cards;
 }
 
-- (NSMutableArray*) lastMatchAttempt
+- (NSMutableArray*) lastMatchAttemptCards
 {
-  if(!_lastMatchAttempt) _lastMatchAttempt = [[NSMutableArray alloc] init];
-  return _lastMatchAttempt;
+  if(!_lastMatchAttemptCards) _lastMatchAttemptCards = [[NSMutableArray alloc] init];
+  return _lastMatchAttemptCards;
 }
 
 - (instancetype)initWithCardCount:(NSUInteger)count
@@ -71,36 +71,39 @@ static const int CHOOSE_PENALTY = 1;
       card.chosen = NO;
     } else {
       NSMutableArray *chosenCards = [[NSMutableArray alloc] init];
+      //find all of the currently chosen cards
       for (Card *otherCard in self.cards) {
         if(otherCard.isChosen && !otherCard.isMatched){
           [chosenCards addObject:otherCard];
         }
       }
-      if ([self.lastMatchAttempt count])
-        [self.lastMatchAttempt removeAllObjects];
       
       self.lastMatch = MAX(self.lastMatch, [card match:chosenCards]);
       if([chosenCards count] == self.matchType - 1){
-        [self.lastMatchAttempt addObjectsFromArray:chosenCards];
-        [self.lastMatchAttempt addObject:card];
+        //clear last match attempt and add the current attempt cards
+        if ([self.lastMatchAttemptCards count]){
+          [self.lastMatchAttemptCards removeAllObjects];
+        }
+        [self.lastMatchAttemptCards addObjectsFromArray:chosenCards];
+        [self.lastMatchAttemptCards addObject:card];
+        
         if(!self.lastMatch){
           self.lastScoreAddition = -MISMATCH_PENALTY;
           self.score -= MISMATCH_PENALTY;
-          for (Card * otherCard in chosenCards) {
+          for (Card * otherCard in lastMatchAttemptCards) {
             otherCard.chosen = NO;
           }
         } else{
-          for (Card * otherCard in chosenCards) {
+          for (Card * otherCard in lastMatchAttemptCards) {
             otherCard.matched = YES;
           }
-          card.matched  = YES;
           self.score += self.lastMatch * MATCH_BONUS;
           self.lastScoreAddition = self.lastMatch * MATCH_BONUS;
         }
+        
         self.lastMatch = 0;
       } else {
         self.lastScoreAddition = 0;
-        
       }
       self.score -= CHOOSE_PENALTY;
       card.chosen = YES;
