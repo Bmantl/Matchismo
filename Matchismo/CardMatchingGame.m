@@ -90,11 +90,11 @@ static const int CHOOSE_PENALTY = 1;
         if(!self.lastMatch){
           self.lastScoreAddition = -MISMATCH_PENALTY;
           self.score -= MISMATCH_PENALTY;
-          for (Card * otherCard in lastMatchAttemptCards) {
+          for (Card * otherCard in self.lastMatchAttemptCards) {
             otherCard.chosen = NO;
           }
         } else{
-          for (Card * otherCard in lastMatchAttemptCards) {
+          for (Card * otherCard in self.lastMatchAttemptCards) {
             otherCard.matched = YES;
           }
           self.score += self.lastMatch * MATCH_BONUS;
