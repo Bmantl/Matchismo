@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "Card.h"
 
 @interface PlayingCard : Card
 
-@property (strong, nonatomic) NSString * suit;
-@property (nonatomic) NSUInteger rank;
-
 + (NSArray *)validSuits;
 + (NSUInteger)maxRank;
+
+@property (nonatomic) NSUInteger rank;
+@property (strong, nonatomic) NSString * suit;
 
 @end

@@ -10,14 +10,14 @@
 
 @implementation PlayingCard
 
-- (NSString *) contents
+- (NSString *)contents
 {
   return [[PlayingCard rankStrings][self.rank] stringByAppendingString:self.suit];
 }
 
 @synthesize suit = _suit;
 
-- (NSString *) suit
+- (NSString *)suit
 {
   return _suit ? _suit : @"?";
 }
@@ -33,18 +33,19 @@
 - (int)match:(NSArray *)otherCards
 {
   int score = 0;
-  int rankScore = 0;
-  int suitScore = 0;
+
   
   for (PlayingCard * otherCard in otherCards) {
     if (otherCard.rank == self.rank) {
-      rankScore += 4;
+      score = 4;
     }else if ([otherCard.suit isEqualToString:self.suit]){
-      suitScore += 1;
+      score = 1;
     }
   }
   
-  score = MAX(rankScore, suitScore);
+  if ([otherCards count] > 1) {
+    score += [[otherCards firstObject ] match:[otherCards subarrayWithRange:NSMakeRange(1, [otherCards count] - 1)]];
+  }
   
   return score;
 }

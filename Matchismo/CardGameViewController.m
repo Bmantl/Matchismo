@@ -7,43 +7,70 @@
 //
 
 #import "CardGameViewController.h"
-#import "PlayingCardDeck.h"
 #import "CardMatchingGame.h"
+#import "GameHistoryViewController.h"
 
 @interface CardGameViewController ()
 @property (strong, nonatomic) CardMatchingGame * game;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
-
-@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *matchAmountControl;
 @property (weak, nonatomic) IBOutlet UILabel *gameState;
 @property (weak, nonatomic) IBOutlet UILabel *matchResult;
+@property (nonatomic) NSUInteger turnsSoFar;
 @end
 
 @implementation CardGameViewController
 
-- (Deck *) createDeck
+- (NSUInteger) matchType
 {
-  return [[PlayingCardDeck alloc] init];
+  return 2;
 }
 
 - (CardMatchingGame *) game
 {
   if (!_game){
     _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
-                                              usingDeck:[self createDeck]];
+                                              usingDeck:[self newDeck]];
+    _game.matchType = self.matchType;
+    self.turnsSoFar = 0;
   }
   
   return _game;
 }
 
+-(id<CardContentMaker>)cardContentMaker
+{
+  if (!_cardContentMaker) _cardContentMaker = [self newCardContentMaker];
+  return _cardContentMaker;
+}
+
+- (void)viewDidLoad
+{
+  for (UIButton *cardButton in self.cardButtons) {
+    cardButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    cardButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+  }
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+  [super viewWillAppear:animated];
+  [self updateUI];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:sender
+{
+  
+  if ([segue.identifier isEqualToString:@"ShowHistory"]) {
+    if ([segue.destinationViewController isKindOfClass:[GameHistoryViewController class]]) {
+      GameHistoryViewController * historyController = (GameHistoryViewController *)segue.destinationViewController;
+      historyController.cardContentMaker = self.cardContentMaker;
+      historyController.gameHistory = self.game.history;
+    }
+  }
+}
+
 - (IBAction)touchCardButton:(UIButton *)sender
 {
-  if(self.matchAmountControl.enabled){
-    self.matchAmountControl.enabled = NO;
-    self.game.matchType = [self getMatchAmount];
-  }
-  
   NSUInteger chosenButtonIndex = [self.cardButtons indexOfObject:sender];
   [self.game chooseCardAtIndex:chosenButtonIndex];
   [self updateUI];
@@ -57,56 +84,79 @@
 
 - (void)updateUI
 {
-  NSMutableString * gameOutput = [[NSMutableString alloc] init];
+  NSMutableAttributedString * gameState = [[NSMutableAttributedString alloc] init];
   for (UIButton *cardButton in self.cardButtons) {
     NSUInteger cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
     Card * card = [self.game cardAtIndex:cardButtonIndex];
-    [cardButton setTitle:[self titleForCard:card] forState:UIControlStateNormal];
+    [cardButton setAttributedTitle:[self titleForCard:card] forState:UIControlStateNormal];
     [cardButton setBackgroundImage:[self imageForCard:card] forState:UIControlStateNormal];
-    if(card.chosen && !card.isMatched){
-      [gameOutput appendString:card.contents];
-    }
     cardButton.enabled = !card.isMatched;
-  }
-  [self showMatchingResult];
-  self.gameState.text = gameOutput;
-  self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", self.game.score];
-  
-}
-
-- (NSString *)titleForCard:(Card *)card
-{
-  return card.isChosen ? card.contents : @"";
-}
-
-- (void)showMatchingResult
-{
-  NSMutableString * result = [[NSMutableString alloc] init];
-  if (self.game.lastScoreAddition){
-    for (Card * card in self.game.lastMatchAttemptCards) {
-      [result appendString:card.contents];
+    
+    if(card.chosen && !card.isMatched){
+      [gameState appendAttributedString:[self.cardContentMaker contentsForCard:card]];
+      [gameState appendAttributedString:[[NSAttributedString alloc] initWithString:@" "]];
     }
-    [result appendString:self.game.lastScoreAddition > 0 ? @"Match! " : @"Mismatch! "];
-    [result appendFormat:@"%ld Points!", self.game.lastScoreAddition];
   }
   
-  self.matchResult.text = result;
+   self.gameState.attributedText = gameState;
+  [self updateMatchingResult];
+  
+  self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", self.game.score];
+}
+
+- (void)updateMatchingResult
+{
+  NSAttributedString * result = [[NSAttributedString alloc] init];
+  NSArray *history = self.game.history;
+  if (self.turnsSoFar < [history count]){
+    self.turnsSoFar = [history count];
+    GameTurn *turn = [history lastObject];
+    result = [self matchResultForTurn:turn];
+  }
+  
+  self.matchResult.attributedText = result;
+}
+
+- (NSAttributedString *)matchResultForTurn:(GameTurn *)turn
+{
+  NSMutableAttributedString * result = [[NSMutableAttributedString alloc] init];
+    for (Card * card in turn.matchedCards) {
+      [result appendAttributedString:[self.cardContentMaker contentsForCard:card]];
+      [result appendAttributedString:[[NSAttributedString alloc] initWithString:@" "]];
+    }
+    [result appendAttributedString:
+     [[NSAttributedString alloc] initWithString:turn.score > 0 ? @"Match! " : @"Mismatch! "]];
+    [result appendAttributedString:
+     [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%ld Points!", turn.score]]];
+  
+  return result;
+}
+
+//Abstract functions.
+
+- (NSAttributedString *)titleForCard:(Card *)card
+{
+  return nil;
 }
 
 - (void)resetGame
 {
-  self.matchAmountControl.enabled = YES;
   self.game = nil;
-}
-
-- (NSUInteger)getMatchAmount
-{
-  return [self.matchAmountControl selectedSegmentIndex] + 2;
 }
 
 - (UIImage *)imageForCard:(Card *)card
 {
-  return [UIImage imageNamed:card.isChosen ? @"cardFront" : @"cardBack"];
+  return nil;
+}
+
+-(id<CardContentMaker>)newCardContentMaker
+{
+  return nil;
+}
+
+- (Deck *) newDeck
+{
+  return nil;
 }
 
 @end

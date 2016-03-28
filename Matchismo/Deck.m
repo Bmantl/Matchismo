@@ -14,13 +14,13 @@
 
 @implementation Deck
 
-- (NSMutableArray *) cards
+- (NSMutableArray *)cards
 {
   if (!_cards) _cards = [[NSMutableArray alloc] init];
   return _cards;
 }
 
-- (void) addCard:(Card *)newCard atTop:(BOOL)atTop
+- (void)addCard:(Card *)newCard atTop:(BOOL)atTop
 {
   if (atTop)
   {
@@ -32,7 +32,7 @@
   }
 }
 
-- (void) addCard:(Card *)newCard
+- (void)addCard:(Card *)newCard
 {
   [self addCard:newCard atTop:NO];
 }
