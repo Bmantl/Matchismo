@@ -23,5 +23,5 @@
 @property (nonatomic, readonly) NSInteger score;
 @property (nonatomic, readwrite) NSUInteger matchType;
 @property (nonatomic, readonly) NSArray *history;
-
+@property (nonatomic, readonly) NSUInteger turnCount;
 @end

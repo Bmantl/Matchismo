@@ -13,6 +13,7 @@
 @property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, strong) NSMutableArray *cards;
 @property (nonatomic, strong) NSMutableArray *turnHistory;
+@property (nonatomic, readwrite) NSUInteger turnCount;
 @end
 
 @implementation CardMatchingGame
@@ -123,6 +124,7 @@ static const int kChoosePenalty = 1;
   turn.matchedCards = matchCards;
   turn.score = matchScore;
   [self.turnHistory addObject:turn];
+  self.turnCount = [self.turnHistory count];
 }
 
 @end

@@ -15,10 +15,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gameState;
 @property (weak, nonatomic) IBOutlet UILabel *matchResult;
-@property (nonatomic) NSUInteger turnsSoFar;
+@property (nonatomic) BOOL needsMatchDisplay;
 @end
 
 @implementation CardGameViewController
+
+static const NSString * keyForGameCount = @"game.turnCount";
 
 static const NSInteger kDefaultMatchType = 2;
 
@@ -33,7 +35,7 @@ static const NSInteger kDefaultMatchType = 2;
     _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
                                               usingDeck:[self newDeck]];
     _game.matchType = self.matchType;
-    self.turnsSoFar = 0;
+    [self addObserver:self forKeyPath:keyForGameCount options:NSKeyValueObservingOptionNew context:NULL];
   }
   
   return _game;
@@ -68,6 +70,16 @@ static const NSInteger kDefaultMatchType = 2;
       historyController.cardContentMaker = self.cardContentMaker;
       historyController.gameHistory = self.game.history;
     }
+  }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+  if ([keyPath isEqualToString:keyForGameCount]) {
+    self.needsMatchDisplay = YES;
   }
 }
 
@@ -109,11 +121,10 @@ static const NSInteger kDefaultMatchType = 2;
 - (void)updateMatchingResult
 {
   NSAttributedString * result = [[NSAttributedString alloc] init];
-  NSArray *history = self.game.history;
-  if (self.turnsSoFar < [history count]){
-    self.turnsSoFar = [history count];
-    GameTurn *turn = [history lastObject];
+  if (self.needsMatchDisplay){
+    GameTurn *turn = [self.game.history lastObject];
     result = [self matchResultForTurn:turn];
+    self.needsMatchDisplay = NO;
   }
   
   self.matchResult.attributedText = result;
@@ -134,6 +145,12 @@ static const NSInteger kDefaultMatchType = 2;
   return result;
 }
 
+- (void)resetGame
+{
+  [self removeObserver:self forKeyPath:keyForGameCount];
+  self.game = nil;
+}
+
 //Abstract functions.
 
 - (NSAttributedString *)titleForCard:(Card *)card
@@ -141,10 +158,7 @@ static const NSInteger kDefaultMatchType = 2;
   return nil;
 }
 
-- (void)resetGame
-{
-  self.game = nil;
-}
+
 
 - (UIImage *)imageForCard:(Card *)card
 {
