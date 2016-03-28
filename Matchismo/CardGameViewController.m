@@ -20,9 +20,11 @@
 
 @implementation CardGameViewController
 
+static const NSInteger kDefaultMatchType = 2;
+
 - (NSUInteger) matchType
 {
-  return 2;
+  return kDefaultMatchType;
 }
 
 - (CardMatchingGame *) game

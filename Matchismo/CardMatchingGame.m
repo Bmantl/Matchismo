@@ -108,6 +108,7 @@ static const int kChoosePenalty = 1;
   } else{
     for (Card * otherCard in otherCards) {
       otherCard.matched = YES;
+      card.matched = YES;
     }
     turnScore = matchScore * kMatchBonus;
   }
