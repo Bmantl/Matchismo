@@ -7,8 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "Card.h"
 #import "Deck.h"
+#import "GameTurn.h"
 
 @interface CardMatchingGame : NSObject
 
@@ -20,10 +22,6 @@
 
 @property (nonatomic, readonly) NSInteger score;
 @property (nonatomic, readwrite) NSUInteger matchType;
-
-//ued to store the score of the last match
-@property (nonatomic, readonly) NSInteger lastScoreAddition;
-//stores the cards used for the last matchAttempt
-@property (nonatomic, strong) NSMutableArray * lastMatchAttemptCards;
+@property (nonatomic, readonly) NSArray *history;
 
 @end

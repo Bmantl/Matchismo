@@ -6,38 +6,42 @@
 //
 //
 
-#import "CardMatchingGame.h"
 #import "Card.h"
+#import "CardMatchingGame.h"
 
 @interface CardMatchingGame()
 @property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, strong) NSMutableArray *cards;
-
-//last move members
-@property (nonatomic) NSUInteger lastMatch;
-@property (nonatomic, readwrite) NSInteger lastScoreAddition;
+@property (nonatomic, strong) NSMutableArray *turnHistory;
 @end
 
 @implementation CardMatchingGame
 
-- (NSMutableArray*) cards
+static const int kMatchBonus = 4;
+static const int kMismatchPenalty = 2;
+static const int kChoosePenalty = 1;
+
+- (NSMutableArray*)cards
 {
   if(!_cards) _cards = [[NSMutableArray alloc] init];
   return _cards;
 }
 
-- (NSMutableArray*) lastMatchAttemptCards
+- (NSArray *)history
 {
-  if(!_lastMatchAttemptCards) _lastMatchAttemptCards = [[NSMutableArray alloc] init];
-  return _lastMatchAttemptCards;
+  return [self.turnHistory copy];
+}
+
+-(NSMutableArray *)turnHistory
+{
+  if(!_turnHistory) _turnHistory = [[NSMutableArray alloc] init];
+  return _turnHistory;
 }
 
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck
-
 {
   self = [super init];
-  
   if(self){
     for(int i = 0; i < count; i++){
       Card * card = [deck drawRandomCard];
@@ -58,11 +62,6 @@
   return index < [self.cards count] ? self.cards[index] : nil;
 }
 
-static const int MATCH_BONUS = 4;
-static const int MISMATCH_PENALTY = 2;
-static const int CHOOSE_PENALTY = 1;
-
-
 - (void)chooseCardAtIndex:(NSUInteger)index
 {
   Card * card = [self cardAtIndex:index];
@@ -70,45 +69,60 @@ static const int CHOOSE_PENALTY = 1;
     if(card.isChosen) {
       card.chosen = NO;
     } else {
-      NSMutableArray *chosenCards = [[NSMutableArray alloc] init];
-      //find all of the currently chosen cards
-      for (Card *otherCard in self.cards) {
-        if(otherCard.isChosen && !otherCard.isMatched){
-          [chosenCards addObject:otherCard];
-        }
+      NSArray *chosenCards = [self getChosenCards];
+      NSInteger turnScore = 0;
+      
+      if([chosenCards count] == self.matchType - 1){
+        turnScore = [self getTurnScoreForCard:card withCards:chosenCards];
+        [self addTurnToHistory:[chosenCards arrayByAddingObject:card] withScore:turnScore];
       }
       
-      self.lastMatch = MAX(self.lastMatch, [card match:chosenCards]);
-      if([chosenCards count] == self.matchType - 1){
-        //clear last match attempt and add the current attempt cards
-        if ([self.lastMatchAttemptCards count]){
-          [self.lastMatchAttemptCards removeAllObjects];
-        }
-        [self.lastMatchAttemptCards addObjectsFromArray:chosenCards];
-        [self.lastMatchAttemptCards addObject:card];
-        
-        if(!self.lastMatch){
-          self.lastScoreAddition = -MISMATCH_PENALTY;
-          self.score -= MISMATCH_PENALTY;
-          for (Card * otherCard in self.lastMatchAttemptCards) {
-            otherCard.chosen = NO;
-          }
-        } else{
-          for (Card * otherCard in self.lastMatchAttemptCards) {
-            otherCard.matched = YES;
-          }
-          self.score += self.lastMatch * MATCH_BONUS;
-          self.lastScoreAddition = self.lastMatch * MATCH_BONUS;
-        }
-        
-        self.lastMatch = 0;
-      } else {
-        self.lastScoreAddition = 0;
-      }
-      self.score -= CHOOSE_PENALTY;
+      self.score += turnScore - kChoosePenalty;
       card.chosen = YES;
     }
   }
+}
+
+//finds the currently chosen cards that are mot matched and returns them
+- (NSArray *)getChosenCards
+{
+  NSMutableArray *chosenCards = [[NSMutableArray alloc] init];
+  for (Card *otherCard in self.cards) {
+    if(otherCard.isChosen && !otherCard.isMatched){
+      [chosenCards addObject:otherCard];
+    }
+  }
+  return [chosenCards copy];
+}
+
+//returns a score for matchhing a card with other cards
+- (NSInteger)getTurnScoreForCard:(Card *)card withCards:(NSArray *)otherCards
+{
+  NSInteger matchScore = [card match:otherCards];
+  NSInteger turnScore = 0;
+  if(!matchScore){
+    for (Card * otherCard in otherCards) {
+      otherCard.chosen = NO;
+    }
+    turnScore = -kMismatchPenalty;
+  } else{
+    for (Card * otherCard in otherCards) {
+      otherCard.matched = YES;
+      card.matched = YES;
+    }
+    turnScore = matchScore * kMatchBonus;
+  }
+  
+  return turnScore;
+}
+
+//adds matched cards and their score to the history of turns
+- (void)addTurnToHistory:(NSArray *)matchCards withScore:(NSInteger)matchScore
+{
+  GameTurn *turn = [[GameTurn alloc] init];
+  turn.matchedCards = matchCards;
+  turn.score = matchScore;
+  [self.turnHistory addObject:turn];
 }
 
 @end

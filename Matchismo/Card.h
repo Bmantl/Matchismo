@@ -10,6 +10,7 @@
 
 @interface Card : NSObject
 
+///Return the contents of the card object
 @property (strong, nonatomic) NSString *contents;
 @property (nonatomic, getter=isChosen) BOOL chosen;
 @property (nonatomic, getter=isMatched) BOOL matched;
