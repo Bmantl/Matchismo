@@ -8,18 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
-#import "CardContentMaker.h"
 #import "CardMatchingGame.h"
 #import "Deck.h"
 
 @interface CardGameViewController : UIViewController
 ///abstract functions - for implemetntation by subclasses.
+///returns a new deck
 - (Deck *) newDeck;
-- (NSAttributedString *)titleForCard:(Card *)card;
-- (UIImage *)imageForCard:(Card *)card;
-- (id<CardContentMaker>)newCardContentMaker;
+
+///creates and returns a new view for a card
+- (UIView *) newCardView;
+
+//updates a view according to a card
+- (void)updateView:(UIView *)view
+          withCard:(Card *)card
+          animated:(BOOL)animated
+        completion:(void (^)(BOOL))completion;
+- (NSUInteger)numberOfCardsToDeal;
 
 @property (nonatomic, readonly) NSUInteger matchType;
-@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
-@property (nonatomic, strong) id<CardContentMaker> cardContentMaker;
+@property (nonatomic) CGSize maxCardSize;
 @end

@@ -1,14 +1,13 @@
 // Copyright (c) 2016 Lightricks. All rights reserved.
 // Created by Boris Talesnik.
 
-#import "SetCardContentMaker.h"
 #import "SetCardDeck.h"
 #import "SetCardGameViewController.h"
+#import "SetCardView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SetCardGameViewController()
-@property (nonatomic, weak) SetCardContentMaker * setCardContentMaker;
 @end
 
 @implementation SetCardGameViewController
@@ -22,17 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray *)validShapes
 {
-  if (!_validShapes) _validShapes = @[@"●", @"◼︎", @"▲"];
+  if (!_validShapes) _validShapes = @[@"oval", @"squiggle", @"diamond"];
   return _validShapes;
-}
-
-- (SetCardContentMaker *)setCardContentMaker
-{
-  if (!_setCardContentMaker) {
-    _setCardContentMaker = (SetCardContentMaker *)self.cardContentMaker;
-  }
-  
-  return _setCardContentMaker;
 }
 
 - (NSUInteger)matchType
@@ -40,14 +30,28 @@ NS_ASSUME_NONNULL_BEGIN
   return 3;
 }
 
-- (NSAttributedString *)titleForCard:(Card *)card
-{
-  return [self.setCardContentMaker stringForCard:card withSeparator:@"\t"];
+- (UIView *) newCardView{
+  return [[SetCardView alloc] init];
 }
 
-- (UIImage *)imageForCard:(Card *)card
-{
-  return [UIImage imageNamed:card.isChosen ? @"setCardChosen" : @"cardFront"];
+- (void)updateView:(UIView *)view
+          withCard:(Card *)card
+          animated:(BOOL)animated
+        completion:(void (^)(BOOL))completion{
+  if (![view isKindOfClass:[SetCardView class]]) return;
+  if (![card isKindOfClass:[SetCard class]]) return;
+  
+  SetCard *setCard = (SetCard *)card;
+  SetCardView *setCardView = (SetCardView *)view;
+  
+  [UIView animateWithDuration:0.5 * (int)animated
+                   animations:^{
+                     setCardView.shade = setCard.shade;
+                     setCardView.shape = setCard.shape;
+                     setCardView.color = self.validColors[setCard.colorIndex];
+                     setCardView.rank = setCard.rank;
+                     setCardView.chosen = setCard.chosen;
+                   } completion:completion];
 }
 
 - (Deck *) newDeck
@@ -56,11 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
                                   withColors:self.validColors];
 }
 
-- (id<CardContentMaker>)newCardContentMaker
-{
-  SetCardContentMaker * setCardContentMaker= [[SetCardContentMaker alloc] init];
-  setCardContentMaker.validColors = self.validColors;
-  return setCardContentMaker;
+- (NSUInteger)numberOfCardsToDeal{
+  return 3;
 }
 
 @end
