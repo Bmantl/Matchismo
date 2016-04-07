@@ -10,7 +10,6 @@
 
 #import "Card.h"
 #import "Deck.h"
-#import "GameTurn.h"
 
 @interface CardMatchingGame : NSObject
 
