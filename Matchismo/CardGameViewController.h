@@ -17,8 +17,8 @@
 - (Deck *) newDeck;
 
 ///creates and returns a new view for a card
-- (UIView *) newCardView;
-
+//- (UIView *) newCardView;
+- (UIView *)newCardViewForCard:(Card *)card;
 //updates a view according to a card
 - (void)updateView:(UIView *)view
           withCard:(Card *)card

@@ -22,11 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
   [self setNeedsDisplay];
 }
 
-- (void)setShape:(NSString *)shape{
-  _shape = shape;
-  [self setNeedsDisplay];
-}
-
 - (void)setChosen:(BOOL)chosen{
   _chosen = chosen;
   [self setNeedsDisplay];
@@ -89,80 +84,14 @@ NS_ASSUME_NONNULL_BEGIN
   
 }
 
-- (NSDictionary *)shapeMakerDictionary{
-  NSDictionary * shapeMakerDictionary = @{@"oval": NSStringFromSelector(@selector(makeOvalCenteredAt:)),
-                                          @"squiggle": NSStringFromSelector(@selector(makeSquiggleCenteredAt:)),
-                                          @"diamond": NSStringFromSelector(@selector(makeDiamondCenteredAt:))};
-  return shapeMakerDictionary;
-}
-
 - (void)drawShapeCenteredAt:(CGPoint)center
 {
-  UIBezierPath * path;
-  if ([self.shape isEqualToString:@"oval"]) {
-    path = [self makeOvalCenteredAt:center];
-  }
-  else if ([self.shape isEqualToString:@"diamond"]) {
-    path = [self makeDiamondCenteredAt:center];
-  }
-  else if ([self.shape isEqualToString:@"squiggle"]) {
-    path = [self makeSquiggleCenteredAt:center];
-  }
-  
+  UIBezierPath * path = [self makeShapeCenteredAt:center];
   if (path) {
     path.lineWidth = self.bounds.size.width * SHAPE_LINE_WIDTH;
     [self fillPath:path];
     [path stroke];
   }
-}
-
-- (UIBezierPath *)makeOvalCenteredAt:(CGPoint)center;
-{
-  CGFloat ovalHeight = self.bounds.size.height * SHAPE_HEIGHT;
-  CGFloat ovalWidth = self.bounds.size.width * SHAPE_WIDTH;
-  
-  UIBezierPath *oval = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(center.x - ovalWidth / 2, center.y - ovalHeight / 2, ovalWidth, ovalHeight)
-                                                  cornerRadius:ovalHeight / 2];
-
-  return oval;
-}
-
-- (UIBezierPath *)makeDiamondCenteredAt:(CGPoint)center;
-{
-  CGFloat diamondHeight = self.bounds.size.height * SHAPE_HEIGHT;
-  CGFloat diamondWidth = self.bounds.size.width * SHAPE_WIDTH;
-  UIBezierPath *diamond = [[UIBezierPath alloc]init];
-  [diamond moveToPoint:CGPointMake(center.x - diamondWidth / 2, center.y)];
-  [diamond addLineToPoint:CGPointMake(center.x, center.y - diamondHeight / 2)];
-  [diamond addLineToPoint:CGPointMake(center.x + diamondWidth / 2, center.y)];
-  [diamond addLineToPoint:CGPointMake(center.x, center.y + diamondHeight / 2)];
-  [diamond closePath];
-  
-  return diamond;
-}
-
-#define SQUIGGLE_FACTOR 1
-
-- (UIBezierPath *)makeSquiggleCenteredAt:(CGPoint)center;
-{
-  CGFloat dx = self.bounds.size.width * SHAPE_WIDTH / 2.0;
-  CGFloat dy = self.bounds.size.height * SHAPE_HEIGHT / 2.0;
-  CGFloat dsqx = dx * SQUIGGLE_FACTOR;
-  CGFloat dsqy = dy * SQUIGGLE_FACTOR;
-  UIBezierPath *squiggle = [[UIBezierPath alloc] init];
-  [squiggle moveToPoint:CGPointMake(center.x - dx, center.y - dy)];
-  [squiggle addQuadCurveToPoint:CGPointMake(center.x - dx, center.y + dy)
-               controlPoint:CGPointMake(center.x - dx - dsqx, center.y - dsqy)];
-  [squiggle addCurveToPoint:CGPointMake(center.x + dx, center.y + dy)
-          controlPoint1:CGPointMake(center.x - dx + dsqx, center.y + dy + dsqy)
-          controlPoint2:CGPointMake(center.x + dx - dsqx, center.y + dy - dsqy)];
-  [squiggle addQuadCurveToPoint:CGPointMake(center.x + dx, center.y - dy)
-               controlPoint:CGPointMake(center.x + dx + dsqx, center.y + dsqy)];
-  [squiggle addCurveToPoint:CGPointMake(center.x - dx, center.y - dy)
-          controlPoint1:CGPointMake(center.x + dx - dsqx, center.y - dy - dsqy)
-          controlPoint2:CGPointMake(center.x - dx + dsqx, center.y - dy + dsqy)];
-  
-  return squiggle;
 }
 
 #define STRIPES_OFFSET 0.06
@@ -220,6 +149,10 @@ NS_ASSUME_NONNULL_BEGIN
   self = [super initWithFrame:frame];
   [self setup];
   return self;
+}
+
+- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center{
+  return nil;
 }
 
 

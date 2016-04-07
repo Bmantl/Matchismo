@@ -11,6 +11,9 @@
 		A13EFEF71CA133F00042C837 /* SetCardDeck.m in Sources */ = {isa = PBXBuildFile; fileRef = A13EFEF61CA133F00042C837 /* SetCardDeck.m */; };
 		A13EFEFA1CA141110042C837 /* PlayingCardGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A13EFEF91CA141110042C837 /* PlayingCardGameViewController.m */; };
 		A13EFEFD1CA149D30042C837 /* SetCardGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A13EFEFC1CA149D30042C837 /* SetCardGameViewController.m */; };
+		A15078661CB67EB80034A38C /* OvalSetCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = A15078651CB67EB80034A38C /* OvalSetCardView.m */; };
+		A15078691CB67FCB0034A38C /* SquiggleSetCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = A15078681CB67FCB0034A38C /* SquiggleSetCardView.m */; };
+		A150786C1CB6802E0034A38C /* DiamondSetCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = A150786B1CB6802E0034A38C /* DiamondSetCardView.m */; };
 		A1560AE01C8EB74000A52F61 /* CardMatchingGame.m in Sources */ = {isa = PBXBuildFile; fileRef = A1560ADF1C8EB74000A52F61 /* CardMatchingGame.m */; };
 		A157029C1CAD0F9300EDF078 /* PlayingCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = A157029B1CAD0F9300EDF078 /* PlayingCardView.m */; };
 		A180F20F1CB23DEB007551E4 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = A180F20E1CB23DEB007551E4 /* Grid.m */; };
@@ -56,6 +59,12 @@
 		A13EFEF91CA141110042C837 /* PlayingCardGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCardGameViewController.m; sourceTree = "<group>"; };
 		A13EFEFB1CA149D30042C837 /* SetCardGameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCardGameViewController.h; sourceTree = "<group>"; };
 		A13EFEFC1CA149D30042C837 /* SetCardGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetCardGameViewController.m; sourceTree = "<group>"; };
+		A15078641CB67EB80034A38C /* OvalSetCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OvalSetCardView.h; sourceTree = "<group>"; };
+		A15078651CB67EB80034A38C /* OvalSetCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OvalSetCardView.m; sourceTree = "<group>"; };
+		A15078671CB67FCB0034A38C /* SquiggleSetCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquiggleSetCardView.h; sourceTree = "<group>"; };
+		A15078681CB67FCB0034A38C /* SquiggleSetCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SquiggleSetCardView.m; sourceTree = "<group>"; };
+		A150786A1CB6802E0034A38C /* DiamondSetCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiamondSetCardView.h; sourceTree = "<group>"; };
+		A150786B1CB6802E0034A38C /* DiamondSetCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiamondSetCardView.m; sourceTree = "<group>"; };
 		A1560ADE1C8EB74000A52F61 /* CardMatchingGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CardMatchingGame.h; path = Matchismo/CardMatchingGame.h; sourceTree = "<group>"; };
 		A1560ADF1C8EB74000A52F61 /* CardMatchingGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CardMatchingGame.m; path = Matchismo/CardMatchingGame.m; sourceTree = "<group>"; };
 		A157029A1CAD0F9300EDF078 /* PlayingCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayingCardView.h; sourceTree = "<group>"; };
@@ -124,6 +133,12 @@
 				A157029B1CAD0F9300EDF078 /* PlayingCardView.m */,
 				A1A161EF1CB3F9CD00F51EC0 /* SetCardView.h */,
 				A1A161F01CB3F9CD00F51EC0 /* SetCardView.m */,
+				A15078641CB67EB80034A38C /* OvalSetCardView.h */,
+				A15078651CB67EB80034A38C /* OvalSetCardView.m */,
+				A15078671CB67FCB0034A38C /* SquiggleSetCardView.h */,
+				A15078681CB67FCB0034A38C /* SquiggleSetCardView.m */,
+				A150786A1CB6802E0034A38C /* DiamondSetCardView.h */,
+				A150786B1CB6802E0034A38C /* DiamondSetCardView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -296,6 +311,7 @@
 				TargetAttributes = {
 					A1F27C671C8DC3450035758D = {
 						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = 4G7EM2A6N3;
 					};
 					A1F27C801C8DC3450035758D = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -370,6 +386,9 @@
 				A13EFEF41CA12EE20042C837 /* SetCard.m in Sources */,
 				A1F27C701C8DC3450035758D /* AppDelegate.m in Sources */,
 				A157029C1CAD0F9300EDF078 /* PlayingCardView.m in Sources */,
+				A15078661CB67EB80034A38C /* OvalSetCardView.m in Sources */,
+				A150786C1CB6802E0034A38C /* DiamondSetCardView.m in Sources */,
+				A15078691CB67FCB0034A38C /* SquiggleSetCardView.m in Sources */,
 				A1F27CAA1C8DD0070035758D /* PlayingCardDeck.m in Sources */,
 				A1F27C6D1C8DC3450035758D /* main.m in Sources */,
 				A1A161F11CB3F9CD00F51EC0 /* SetCardView.m in Sources */,
@@ -513,10 +532,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Matchismo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = bt.Matchismo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -524,10 +546,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Matchismo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = bt.Matchismo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

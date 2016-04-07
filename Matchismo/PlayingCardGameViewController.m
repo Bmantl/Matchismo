@@ -14,6 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
   return [[PlayingCardDeck alloc] init];
 }
 
+- (UIView *)newCardViewForCard:(Card *)card
+{
+  UIView *view = [[PlayingCardView alloc] init];
+  [self updateView:view withCard:card animated:NO completion:nil];
+  return view;
+}
+
 - (UIView *) newCardView{
   return [[PlayingCardView alloc] init];
 }

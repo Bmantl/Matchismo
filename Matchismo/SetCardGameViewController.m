@@ -4,6 +4,9 @@
 #import "SetCardDeck.h"
 #import "SetCardGameViewController.h"
 #import "SetCardView.h"
+#import "OvalSetCardView.h"
+#import "DiamondSetCardView.h"
+#import "SquiggleSetCardView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,8 +33,21 @@ NS_ASSUME_NONNULL_BEGIN
   return 3;
 }
 
-- (UIView *) newCardView{
-  return [[SetCardView alloc] init];
+- (UIView *)newCardViewForCard:(Card *)card
+{
+  if (![card isKindOfClass:[SetCard class]]) {
+    return nil;
+  }
+  SetCard *setCard = (SetCard *)card;
+  UIView *view = [[NSClassFromString([self cardViewTypes][setCard.shape]) alloc] init];
+  [self updateView:view withCard:card animated:NO completion:nil];
+  return view;
+}
+
+- (NSDictionary *)cardViewTypes{
+  return @{@"oval": NSStringFromClass([OvalSetCardView class]),
+    @"squiggle": NSStringFromClass([SquiggleSetCardView class]),
+    @"diamond": NSStringFromClass([DiamondSetCardView class])};
 }
 
 - (void)updateView:(UIView *)view
@@ -47,7 +63,6 @@ NS_ASSUME_NONNULL_BEGIN
   [UIView animateWithDuration:0.5 * (int)animated
                    animations:^{
                      setCardView.shade = setCard.shade;
-                     setCardView.shape = setCard.shape;
                      setCardView.color = self.validColors[setCard.colorIndex];
                      setCardView.rank = setCard.rank;
                      setCardView.chosen = setCard.chosen;

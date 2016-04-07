@@ -256,13 +256,6 @@ static const NSInteger kDefaultMatchType = 2;
 
 #pragma mark - helpers
 
-- (UIView *)newCardViewForCard:(Card *)card
-{
-  UIView *view = [self newCardView];
-  [self updateView:view withCard:card animated:NO completion:nil];
-  return view;
-}
-
 - (void)resetGame
 {
   self.game = nil;
@@ -284,7 +277,7 @@ static const NSInteger kDefaultMatchType = 2;
   return nil;
 }
 
-- (UIView *) newCardView{
+- (UIView *) newCardViewForCard:(Card *)card{
   return nil;
 }
 

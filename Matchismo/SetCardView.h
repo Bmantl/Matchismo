@@ -7,9 +7,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SetCardView : UIView
 
+- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center;
+
 @property (nonatomic, strong) UIColor *color;
 @property (nonatomic) NSUInteger rank;
-@property (nonatomic, strong) NSString *shape;
 @property (nonatomic) NSString * shade;
 
 @property (nonatomic) BOOL chosen;
