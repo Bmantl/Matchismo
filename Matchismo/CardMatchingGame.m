@@ -12,8 +12,8 @@
 @interface CardMatchingGame()
 @property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, strong) NSMutableArray *cards;
-@property (nonatomic, strong) NSMutableArray *turnHistory;
-@property (nonatomic, readwrite) NSUInteger turnCount;
+@property (nonatomic, strong) Deck *deck;
+@property (nonatomic, readwrite) NSUInteger numberOfDealtCards;
 @end
 
 @implementation CardMatchingGame
@@ -28,24 +28,15 @@ static const int kChoosePenalty = 1;
   return _cards;
 }
 
-- (NSArray *)history
-{
-  return [self.turnHistory copy];
-}
-
--(NSMutableArray *)turnHistory
-{
-  if(!_turnHistory) _turnHistory = [[NSMutableArray alloc] init];
-  return _turnHistory;
-}
-
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck
 {
   self = [super init];
   if(self){
+    self.deck = deck;
     for(int i = 0; i < count; i++){
       Card * card = [deck drawRandomCard];
+      self.numberOfDealtCards++;
       if(card){
         [self.cards addObject:card];
       }else{
@@ -72,12 +63,9 @@ static const int kChoosePenalty = 1;
     } else {
       NSArray *chosenCards = [self getChosenCards];
       NSInteger turnScore = 0;
-      
       if([chosenCards count] == self.matchType - 1){
         turnScore = [self getTurnScoreForCard:card withCards:chosenCards];
-        [self addTurnToHistory:[chosenCards arrayByAddingObject:card] withScore:turnScore];
       }
-      
       self.score += turnScore - kChoosePenalty;
       card.chosen = YES;
     }
@@ -117,14 +105,17 @@ static const int kChoosePenalty = 1;
   return turnScore;
 }
 
-//adds matched cards and their score to the history of turns
-- (void)addTurnToHistory:(NSArray *)matchCards withScore:(NSInteger)matchScore
-{
-  GameTurn *turn = [[GameTurn alloc] init];
-  turn.matchedCards = matchCards;
-  turn.score = matchScore;
-  [self.turnHistory addObject:turn];
-  self.turnCount = [self.turnHistory count];
+- (BOOL)drawCards:(NSUInteger)amount{
+  for(int i = 0; i < amount; i++){
+    Card * card = [self.deck drawRandomCard];
+    if(card){
+      [self.cards addObject:card];
+      self.numberOfDealtCards++;
+    }else{
+      return NO;
+    }
+  }
+  return YES;
 }
 
 @end

@@ -19,9 +19,9 @@
 
 - (Card *)cardAtIndex:(NSUInteger)index;
 - (void)chooseCardAtIndex:(NSUInteger)index;
+- (BOOL)drawCards:(NSUInteger)amount;
 
 @property (nonatomic, readonly) NSInteger score;
 @property (nonatomic, readwrite) NSUInteger matchType;
-@property (nonatomic, readonly) NSArray *history;
-@property (nonatomic, readonly) NSUInteger turnCount;
+@property (nonatomic, readonly) NSUInteger numberOfDealtCards;
 @end
