@@ -21,6 +21,9 @@
 @property (nonatomic, strong) NSMutableArray *cardViews;
 @property (nonatomic, strong) UIDynamicAnimator *pileAnimator;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (nonatomic) CGSize maxCardSize;
+
+//properties for the snap and move animations
 @property (nonatomic) CGPoint snapToAnchorDelta;
 @property (nonatomic) CGPoint snapCenter;
 @end
@@ -37,15 +40,14 @@ static const NSInteger kDefaultMatchType = 2;
   return kDefaultMatchType;
 }
 
-- (NSMutableArray *)cardViews{
+- (NSMutableArray *)cardViews {
   if (!_cardViews) {
     _cardViews = [[NSMutableArray alloc] init];
   }
   return _cardViews;
 }
 
-- (Grid *)grid
-{
+- (Grid *)grid {
   if (!_grid){
     _grid = [[Grid alloc] init];
     _grid.cellAspectRatio = self.maxCardSize.width / self.maxCardSize.height;
@@ -60,8 +62,7 @@ static const NSInteger kDefaultMatchType = 2;
 
 #define DEFAULT_NUMBER_OF_CARDS 12
 
-- (CardMatchingGame *) game
-{
+- (CardMatchingGame *) game {
   if (!_game){
     _game = [[CardMatchingGame alloc] initWithCardCount:DEFAULT_NUMBER_OF_CARDS
                                               usingDeck:[self newDeck]];
@@ -76,7 +77,7 @@ static const NSInteger kDefaultMatchType = 2;
 #define CARD_HEIGHT 180.0
 #define CARD_WIDTH 120.0
 
-- (void)viewDidLoad{
+- (void)viewDidLoad {
   self.maxCardSize = CGSizeMake(CARD_WIDTH, CARD_HEIGHT);
   self.scoreLabel.layer.borderColor = [UIColor blackColor].CGColor;
   [self.view setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
@@ -85,19 +86,31 @@ static const NSInteger kDefaultMatchType = 2;
   [self.cardGridView addGestureRecognizer:pinchPan];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   [self updateUI];
 }
 
--(void)viewDidLayoutSubviews{
+-(void)viewDidLayoutSubviews {
   self.grid = nil;
   [self updateUI];
 }
 
-- (void)updateUI
+- (void)resetGame
 {
+  self.game = nil;
+  self.pileAnimator = nil;
+  for (UIView *cardView in self.cardViews) {
+    [self removeCardView:cardView withDelayFactor:0];
+  }
+  self.cardViews = nil;
+}
+
+- (NSUInteger)numberOfCardsToDeal {
+  return 1;
+}
+
+- (void)updateUI {
   if(self.pileAnimator) return;
   NSUInteger removedCards = 0;
   for (NSUInteger cardIndex = 0; cardIndex < self.game.numberOfDealtCards; cardIndex++){
@@ -130,18 +143,22 @@ static const NSInteger kDefaultMatchType = 2;
   self.scoreLabel.text = [NSString stringWithFormat:@"Score: %ld", (long)self.game.score];
 }
 
--(void)bindCardView:(UIView *)cardView{
+//Binds a \c cardView to recognizers, super views and arrays
+- (void)bindCardView:(UIView *)cardView {
   [self.cardViews addObject:cardView];
   [self.cardGridView addSubview:cardView];
-  UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapCard:)];
+  UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                        action:@selector(tapCard:)];
   [cardView addGestureRecognizer:tap];
   UIPanGestureRecognizer *gridPan = [[UIPanGestureRecognizer alloc] initWithTarget:self
                                                                             action:@selector(panPile:)];
   [cardView addGestureRecognizer:gridPan];
 }
 
--(void)updateCardViewlocations
-{
+
+//Updates the current card views to be at the correct location
+//if not correct - moves them to the right place
+- (void)updateCardViewlocations {
   self.grid.minimumNumberOfCells = [self.cardViews count];
   NSUInteger movedViews = 0;
   for (NSUInteger cardViewIndex = 0; cardViewIndex < [self.cardViews count]; cardViewIndex++) {
@@ -161,9 +178,11 @@ static const NSInteger kDefaultMatchType = 2;
   }
 }
 
-- (void)removeCardView:(UIView *)view withDelayFactor:(NSUInteger)delayFactor{
+//Removes a card \c view.
+// \c numberInLine is the factor of how much to delay the removal
+- (void)removeCardView:(UIView *)view withDelayFactor:(NSUInteger)numberInLine {
   [UIView animateWithDuration:0.5
-                        delay:0.1 * delayFactor
+                        delay:0.1 * numberInLine
                       options:UIViewAnimationOptionCurveEaseInOut
                    animations:^{
                      CGRect frame = CGRectMake(-200.0, -200.0, view.frame.size.width, view.frame.size.height);
@@ -175,7 +194,7 @@ static const NSInteger kDefaultMatchType = 2;
   
 }
 
-#pragma mark - Actions
+#pragma mark - Actions / Gestures
 
 - (void)pinchGrid:(UIPinchGestureRecognizer *)gesture {
   
@@ -202,8 +221,7 @@ static const NSInteger kDefaultMatchType = 2;
   [self updateUI];
 }
 
-- (void)panPile:(UIPanGestureRecognizer *)gesture
-{
+- (void)panPile:(UIPanGestureRecognizer *)gesture {
   if (!self.pileAnimator) {
     return;
   }
@@ -222,7 +240,7 @@ static const NSInteger kDefaultMatchType = 2;
   }
 }
 
-- (void)tapCard:(UITapGestureRecognizer *)gesture{
+- (void)tapCard:(UITapGestureRecognizer *)gesture {
   if (self.pileAnimator) {
     self.pileAnimator = nil;
     [self updateUI];
@@ -254,37 +272,20 @@ static const NSInteger kDefaultMatchType = 2;
   [self updateUI];
 }
 
-#pragma mark - helpers
+#pragma mark - Abstract Methods
 
-- (void)resetGame
-{
-  self.game = nil;
-  self.pileAnimator = nil;
-  for (UIView *cardView in self.cardViews) {
-    [self removeCardView:cardView withDelayFactor:0];
-  }
-  self.cardViews = nil;
-}
-
-- (NSUInteger)numberOfCardsToDeal{
-  return 1;
-}
-
-#pragma mark - abstract functions
-
-- (Deck *) newDeck
-{
+- (Deck *)newDeck {
   return nil;
 }
 
-- (UIView *) newCardViewForCard:(Card *)card{
+- (UIView *)newCardViewForCard:(Card *)card {
   return nil;
 }
 
 - (void)updateView:(UIView *)view
           withCard:(Card *)card
           animated:(BOOL)animated
-        completion:(void (^)(BOOL))completion{
+        completion:(void (^)(BOOL))completion { 
   
 }
 

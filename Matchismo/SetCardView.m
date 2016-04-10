@@ -7,22 +7,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation SetCardView
 
-- (void)setColor:(UIColor *)color{
+- (void)setColor:(UIColor *)color {
   _color = color;
   [self setNeedsDisplay];
 }
 
-- (void)setRank:(NSUInteger)rank{
+- (void)setRank:(NSUInteger)rank {
   _rank = rank;
   [self setNeedsDisplay];
 }
 
-- (void)setShade:(NSString *)shade{
+- (void)setShade:(NSString *)shade {
   _shade = shade;
   [self setNeedsDisplay];
 }
 
-- (void)setChosen:(BOOL)chosen{
+- (void)setChosen:(BOOL)chosen {
   _chosen = chosen;
   [self setNeedsDisplay];
 }
@@ -35,8 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Drawing
 
-- (void)drawRect:(CGRect)rect{
-  // Drawing code
+- (void)drawRect:(CGRect)rect {
   UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:[self cornerRadius]];
   
   [roundedRect addClip];
@@ -62,11 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define SHAPE_OFFSET 0.275;
 #define SHAPE_LINE_WIDTH 0.015;
-#define SHAPE_WIDTH 0.6
-#define SHAPE_HEIGHT 0.2
 
-- (void)drawShapes
-{
+- (void)drawShapes {
   [self.color setStroke];
   CGPoint cardCenter = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
   if (self.rank == 1) {
@@ -84,8 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
   
 }
 
-- (void)drawShapeCenteredAt:(CGPoint)center
-{
+- (void)drawShapeCenteredAt:(CGPoint)center {
   UIBezierPath * path = [self makeShapeCenteredAt:center];
   if (path) {
     path.lineWidth = self.bounds.size.width * SHAPE_LINE_WIDTH;
@@ -97,8 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define STRIPES_OFFSET 0.06
 #define STRIPES_ANGLE 3
 
-- (void)fillPath:(UIBezierPath *)path
-{
+- (void)fillPath:(UIBezierPath *)path {
   if ([self.shade isEqualToString:@"blank"]) {
     [[UIColor clearColor] setFill];
   } else if ([self.shade isEqualToString:@"striped"]) {
@@ -113,6 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
     CGFloat xOffset = self.bounds.size.width * STRIPES_OFFSET;
     lineEnd.y += path.bounds.size.height;
     lineStart.x -= xOffset * STRIPES_ANGLE;
+    //draw lines
     while (lineStart.x < path.bounds.origin.x + path.bounds.size.width) {
       [stripes moveToPoint:lineStart];
       [stripes addLineToPoint:lineEnd];
@@ -129,32 +124,29 @@ NS_ASSUME_NONNULL_BEGIN
   }
 }
 
-
 #pragma mark - Initialization
 
-- (void)setup
-{
+- (void)setup {
   self.backgroundColor = nil;
   self.opaque = NO;
   self.contentMode = UIViewContentModeRedraw;
 }
 
-- (void)awakeFromNib
-{
+- (void)awakeFromNib {
   [self setup];
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
+- (id)initWithFrame:(CGRect)frame {
   self = [super initWithFrame:frame];
   [self setup];
   return self;
 }
 
-- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center{
+#pragma mark - Abstract Methods
+
+- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center {
   return nil;
 }
-
 
 @end
 

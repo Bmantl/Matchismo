@@ -16,10 +16,9 @@
 ///returns a new deck
 - (Deck *) newDeck;
 
-///creates and returns a new view for a card
-//- (UIView *) newCardView;
+///Creates and returns a new view for a card
 - (UIView *)newCardViewForCard:(Card *)card;
-//updates a view according to a card
+///Updates a view according to a given \c card
 - (void)updateView:(UIView *)view
           withCard:(Card *)card
           animated:(BOOL)animated
@@ -27,5 +26,5 @@
 - (NSUInteger)numberOfCardsToDeal;
 
 @property (nonatomic, readonly) NSUInteger matchType;
-@property (nonatomic) CGSize maxCardSize;
+
 @end

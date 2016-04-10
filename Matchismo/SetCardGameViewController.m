@@ -15,36 +15,34 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation SetCardGameViewController
 
-- (NSArray *)validColors
-{
+- (NSArray *)validColors {
   if (!_validColors) _validColors = @[[UIColor redColor], [UIColor greenColor],
                                       [UIColor purpleColor]];
   return _validColors;
 }
 
-- (NSArray *)validShapes
-{
+- (NSArray *)validShapes {
   if (!_validShapes) _validShapes = @[@"oval", @"squiggle", @"diamond"];
   return _validShapes;
 }
 
-- (NSUInteger)matchType
-{
+- (NSUInteger)matchType {
   return 3;
 }
 
-- (UIView *)newCardViewForCard:(Card *)card
-{
+- (UIView *)newCardViewForCard:(Card *)card {
   if (![card isKindOfClass:[SetCard class]]) {
     return nil;
   }
   SetCard *setCard = (SetCard *)card;
-  UIView *view = [[NSClassFromString([self cardViewTypes][setCard.shape]) alloc] init];
-  [self updateView:view withCard:card animated:NO completion:nil];
-  return view;
+  SetCardView *setCardView = [[NSClassFromString([self cardViewTypes][setCard.shape]) alloc] init];
+  setCardView.shade = setCard.shade;
+  setCardView.color = self.validColors[setCard.colorIndex];
+  setCardView.rank = setCard.rank;
+  return setCardView;
 }
 
-- (NSDictionary *)cardViewTypes{
+- (NSDictionary *)cardViewTypes {
   return @{@"oval": NSStringFromClass([OvalSetCardView class]),
     @"squiggle": NSStringFromClass([SquiggleSetCardView class]),
     @"diamond": NSStringFromClass([DiamondSetCardView class])};
@@ -53,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateView:(UIView *)view
           withCard:(Card *)card
           animated:(BOOL)animated
-        completion:(void (^)(BOOL))completion{
+        completion:(void (^)(BOOL))completion {
   if (![view isKindOfClass:[SetCardView class]]) return;
   if (![card isKindOfClass:[SetCard class]]) return;
   
@@ -62,20 +60,16 @@ NS_ASSUME_NONNULL_BEGIN
   
   [UIView animateWithDuration:0.5 * (int)animated
                    animations:^{
-                     setCardView.shade = setCard.shade;
-                     setCardView.color = self.validColors[setCard.colorIndex];
-                     setCardView.rank = setCard.rank;
                      setCardView.chosen = setCard.chosen;
                    } completion:completion];
 }
 
-- (Deck *) newDeck
-{
+- (Deck *)newDeck {
   return [[SetCardDeck alloc] initWithShapes:self.validShapes
                                   withColors:self.validColors];
 }
 
-- (NSUInteger)numberOfCardsToDeal{
+- (NSUInteger)numberOfCardsToDeal {
   return 3;
 }
 

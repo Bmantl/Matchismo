@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define SQUIGGLE_FACTOR 1
 
-- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center{
+- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center {
   CGFloat dx = self.bounds.size.width * SHAPE_WIDTH / 2.0;
   CGFloat dy = self.bounds.size.height * SHAPE_HEIGHT / 2.0;
   CGFloat dsqx = dx * SQUIGGLE_FACTOR;
@@ -30,7 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
               controlPoint2:CGPointMake(center.x - dx + dsqx, center.y - dy + dsqy)];
   
   return squiggle;
-
 }
 @end
 

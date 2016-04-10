@@ -9,40 +9,40 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PlayingCardGameViewController
 
-- (Deck *)newDeck
-{
+- (Deck *)newDeck {
   return [[PlayingCardDeck alloc] init];
 }
 
-- (UIView *)newCardViewForCard:(Card *)card
-{
-  UIView *view = [[PlayingCardView alloc] init];
-  [self updateView:view withCard:card animated:NO completion:nil];
-  return view;
+- (UIView *)newCardViewForCard:(Card *)card {
+  if (![card isKindOfClass:[PlayingCard class]]) nil;
+  PlayingCard *playingCard = (PlayingCard *)card;
+  PlayingCardView *playingCardView = [[PlayingCardView alloc] init];
+  playingCardView.rank = playingCard.rank;
+  playingCardView.suit = playingCard.suit;
+  return playingCardView;
 }
 
-- (UIView *) newCardView{
+- (UIView *) newCardView {
   return [[PlayingCardView alloc] init];
 }
 
 - (void)updateView:(UIView *)view
           withCard:(Card *)card
           animated:(BOOL)animated
-        completion:(void (^)(BOOL))completion{
+        completion:(void (^)(BOOL))completion {
   if (![view isKindOfClass:[PlayingCardView class]]) return;
   if (![card isKindOfClass:[PlayingCard class]]) return;
   
   PlayingCard *playingCard = (PlayingCard *)card;
   PlayingCardView *playingCardView = (PlayingCardView *)view;
-  playingCardView.rank = playingCard.rank;
-  playingCardView.suit = playingCard.suit;
+
   if(animated && (playingCardView.faceUp != playingCard.isChosen)){
     [self animateFlipForView:playingCardView WithCompletion:completion];
   }
 }
 
-- (void)animateFlipForView:(PlayingCardView*)playingCardView
-            WithCompletion:(void (^)(BOOL))completion{
+- (void)animateFlipForView:(PlayingCardView *)playingCardView
+            WithCompletion:(void (^)(BOOL))completion {
   [UIView transitionWithView:playingCardView
                     duration:0.5
                      options:UIViewAnimationOptionTransitionFlipFromLeft
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
                   } completion:completion];
 }
 
-- (NSUInteger)numberOfCardsToDeal{
+- (NSUInteger)numberOfCardsToDeal { 
   return 2;
 }
 

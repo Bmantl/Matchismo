@@ -5,8 +5,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+///Object used to graphically represent a Set Card
 @interface SetCardView : UIView
 
+//Abstract
+///Returns a path of a shape centered at \c center
 - (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center;
 
 @property (nonatomic, strong) UIColor *color;

@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define SHAPE_WIDTH 0.6
 #define SHAPE_HEIGHT 0.2
 
-- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center{
+- (UIBezierPath *)makeShapeCenteredAt:(CGPoint)center {
   CGFloat diamondHeight = self.bounds.size.height * SHAPE_HEIGHT;
   CGFloat diamondWidth = self.bounds.size.width * SHAPE_WIDTH;
   UIBezierPath *diamond = [[UIBezierPath alloc]init];
@@ -23,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
   return diamond;
   
 }
-
 @end
 
 NS_ASSUME_NONNULL_END
